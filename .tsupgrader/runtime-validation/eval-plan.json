@@ -1,0 +1,48 @@
+{
+  "projectType": "webapp",
+  "setup": [
+    {
+      "command": "npm",
+      "args": ["ci"],
+      "timeoutSeconds": 600
+    }
+  ],
+  "assertions": [
+    {
+      "name": "node-version",
+      "kind": "process",
+      "command": "node",
+      "args": ["-p", "process.version"],
+      "verificationMethod": "output-contains",
+      "expected": "v22.22.2"
+    },
+    {
+      "name": "production-build",
+      "kind": "process",
+      "command": "npm",
+      "args": ["run", "build"],
+      "verificationMethod": "exit-code",
+      "expected": "0",
+      "timeoutSeconds": 300
+    },
+    {
+      "name": "tests-pass",
+      "kind": "process",
+      "command": "npm",
+      "args": ["test", "--", "--watch=false", "--browsers=ChromeHeadless"],
+      "verificationMethod": "test-results",
+      "expected": "0",
+      "timeoutSeconds": 300
+    },
+    {
+      "name": "development-server-serves-home",
+      "kind": "http-probe",
+      "startCommand": "npm",
+      "startArgs": ["run", "start", "--", "--host", "127.0.0.1"],
+      "url": "http://127.0.0.1:4200/",
+      "verificationMethod": "http-status",
+      "expected": "200",
+      "timeoutSeconds": 120
+    }
+  ]
+}
